@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#007AFF">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi0KPRh9GR0YIg0LjQvNGD0YnQtdGB0YLQstCwIiwic2hvcnRfbmFtZSI6ItCh0LrQu9Cw0LQiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZmZmZmZiIsInRoZW1lX2NvbG9yIjoiIzAwN0FGRiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgd2lkdGg9JzE5MicgaGVpZ2h0PScxOTInJTNFJTNDcmVjdCB3aWR0aD0nMTkyJyBoZWlnaHQ9JzE5MicgZmlsbD0nJTIzMDA3QUZGJy8lM0UlM0N0ZXh0IHg9JzUwJTI1JyB5PSc1MCUyNScgZm9udC1zaXplPSc5MCcgdGV4dC1hbmNob3I9J21pZGRsZScgZHk9Jy4zNWVtJyBmaWxsPSd3aGl0ZScgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnJTNF8J+TpiUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsInNpemVzIjoiMTkyeDE5MiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <title>Учёт имущества</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary-color: #007AFF;
+            --danger-color: #FF3B30;
+            --success-color: #34C759;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg-secondary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .app {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            padding-bottom: 20px;
+        }
+        
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .settings-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+
+        .settings-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .content {
+            padding: 15px;
+        }
+        
+        .category {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .category:active {
+            box-shadow: var(--shadow);
+        }
+        
+        .category-header {
+            padding: 15px;
+            background: #fafafa;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+        
+        .category-header:active {
+            background: #f0f0f0;
+        }
+        
+        .category-name {
+            flex: 1;
+            font-weight: 500;
+            font-size: 16px;
+        }
+        
+        .category-total {
+            color: var(--text-secondary);
+            margin-right: 15px;
+            font-size: 14px;
+        }
+        
+        .expand-icon {
+            color: var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .expand-icon.expanded {
+            transform: rotate(90deg);
+        }
+        
+        .cards {
+            display: none;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .cards.show {
+            display: block;
+        }
+        
+        .card {
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .card:last-child {
+            border-bottom: none;
+        }
+        
+        .card-header {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .card-header:active {
+            background: #fafafa;
+        }
+        
+        .card-info {
+            flex: 1;
+        }
+        
+        .card-number {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .card-price {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .card-quantity {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+        
+        .card-sizes {
+            display: none;
+            padding: 10px 15px;
+            background: #fafafa;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .card-sizes.show {
+            display: block;
+        }
+        
+        .card-size-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .card-size-item:last-child {
+            border-bottom: none;
+        }
+        
+        .card-size-name {
+            font-weight: 500;
+        }
+        
+        .card-size-qty {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .card-actions {
+            padding: 10px 15px;
+            background: #fafafa;
+            display: none;
+            gap: 8px;
+        }
+        
+        .card-actions.show {
+            display: flex;
+        }
+        
+        .edit-card-btn {
+            flex: 1;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .edit-card-btn:active {
+            opacity: 0.8;
+        }
+        
+        .card-expand-icon {
+            color: var(--primary-color);
+            transition: transform 0.3s ease;
+            margin-left: 8px;
+        }
+        
+        .card-expand-icon.expanded {
+            transform: rotate(90deg);
+        }
+        
+        .delete-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .delete-btn:active {
+            opacity: 0.8;
+        }
+        
+        .add-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+        }
+        
+        .add-btn:active {
+            opacity: 0.8;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            z-index: 10;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .size-item {
+            display: flex;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+        
+        .size-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .qty-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+        }
+
+        .qty-btn:active {
+            opacity: 0.7;
+        }
+        
+        .qty-input {
+            width: 60px;
+            text-align: center;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .remove-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: opacity 0.2s;
+        }
+
+        .remove-btn:active {
+            opacity: 0.8;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .settings-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        
+        .settings-item:active {
+            background: #f0f0f0;
+        }
+        
+        .template-item {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .template-sizes {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        .size-chip {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            margin: 4px;
+        }
+        
+        .add-size-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+        }
+
+        .add-size-btn:active {
+            opacity: 0.8;
+        }
+        
+        .edit-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: opacity 0.2s;
+        }
+
+        .edit-btn:active {
+            opacity: 0.8;
+        }
+        
+        .select-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .confirm-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .confirm-dialog.show {
+            display: flex;
+        }
+        
+        .confirm-box {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 350px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+        
+        .confirm-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .confirm-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .confirm-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .confirm-btn-no {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            background: var(--border-color);
+            color: var(--text-primary);
+            transition: opacity 0.2s;
+        }
+
+        .confirm-btn-no:active {
+            opacity: 0.8;
+        }
+        
+        .confirm-btn-yes {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            background: var(--danger-color);
+            color: white;
+            transition: opacity 0.2s;
+        }
+
+        .confirm-btn-yes:active {
+            opacity: 0.8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 3000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* Loader */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <h1 id="warehouseName">Склад №1</h1>
+            <button class="settings-btn" id="settingsBtn" aria-label="Настройки">⚙️</button>
+        </div>
+
+        <div class="content">
+            <div id="categories"></div>
+            <button class="add-btn" id="addCategoryBtn">+ Добавить наименование</button>
+        </div>
+    </div>
+
+    <!-- Toast для уведомлений -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Модальное окно настроек -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Настройки</h2>
+                <button class="close-btn" id="closeSettingsBtn" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Название склада:</label>
+                    <input type="text" class="form-input" id="warehouseInput" maxlength="50">
+                </div>
+                <div class="settings-item" id="sizeTemplatesBtn">
+                    <span>База размеров</span>
+                    <span>▶</span>
+                </div>
+                <div class="settings-item" id="clearWarehouseBtn">
+                    <span style="color: var(--danger-color);">Очистить склад</span>
+                    <span>🗑️</span>
+                </div>
+                <div class="settings-item" id="exportDataBtn">
+                    <span>Экспорт данных</span>
+                    <span>📤</span>
+                </div>
+                <div class="settings-item" id="importDataBtn">
+                    <span>Импорт данных</span>
+                    <span>📥</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно базы размеров -->
+    <div id="templatesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">База размеров</h2>
+                <button class="close-btn" id="closeTemplatesBtn" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="templatesList"></div>
+                <button class="add-btn" id="addTemplateBtn">+ Добавить шаблон размеров</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования шаблона -->
+    <div id="templateEditorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="templateEditorTitle">Новый шаблон</h2>
+                <button class="close-btn" id="closeTemplateEditorBtn" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Название категории:</label>
+                    <input type="text" class="form-input" id="templateName" placeholder="Например: Блузки белые" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Размеры:</label>
+                    <div class="select-group">
+                        <input type="text" class="form-input" id="newSize" placeholder="Например: 88/158,164" style="flex: 1" maxlength="30">
+                        <button class="btn-primary" id="addSizeToTemplateBtn" style="padding: 10px 20px; border-radius: 6px; border: none">Добавить</button>
+                    </div>
+                    <div id="templateSizesList"></div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="cancelTemplateBtn">Отмена</button>
+                    <button class="btn btn-primary" id="saveTemplateBtn">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования категории -->
+    <div id="categoryEditorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="categoryEditorTitle">Новое наименование</h2>
+                <button class="close-btn" id="closeCategoryEditorBtn" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Название:</label>
+                    <input type="text" class="form-input" id="categoryName" placeholder="Например: Белье трикотажное" maxlength="50">
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="cancelCategoryBtn">Отмена</button>
+                    <button class="btn btn-primary" id="saveCategoryBtn">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования карточки -->
+    <div id="cardEditorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="cardEditorTitle">Новая карточка</h2>
+                <button class="close-btn" id="closeCardEditorBtn" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Номер карточки:</label>
+                    <input type="text" class="form-input" id="cardNumber" placeholder="Например: 001" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Цена:</label>
+                    <input type="number" class="form-input" id="cardPrice" placeholder="Например: 1000" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Выбрать из базы размеров:</label>
+                    <select class="form-select" id="templateSelect">
+                        <option value="">-- Выберите категорию --</option>
+                    </select>
+                </div>
+                <div id="templateSizeSelect" style="display: none">
+                    <div class="form-group">
+                        <label class="form-label">Размер:</label>
+                        <div class="select-group">
+                            <select class="form-select" id="sizeFromTemplate" style="flex: 1"></select>
+                            <button class="btn-primary" id="addSizeFromTemplateBtn" style="padding: 10px 20px; border-radius: 6px; border: none">Добавить</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Размеры и количество:</label>
+                    <div id="cardSizesList"></div>
+                    <button class="add-size-btn" id="addSizeManuallyBtn">+ Добавить размер вручную</button>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="cancelCardBtn">Отмена</button>
+                    <button class="btn btn-primary" id="saveCardBtn">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Диалог подтверждения -->
+    <div id="confirmDialog" class="confirm-dialog">
+        <div class="confirm-box">
+            <div class="confirm-title" id="confirmTitle">Подтверждение</div>
+            <div class="confirm-message" id="confirmMessage">Вы уверены?</div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn-no" id="confirmNoBtn">Нет</button>
+                <button class="confirm-btn-yes" id="confirmYesBtn">Да</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="importFileInput" accept=".json" style="display: none;">
+
+    <script>
+        // Управление состоянием приложения
+        const App = {
+            data: {
+                warehouseName: 'Склад №1',
+                categories: [],
+                templates: [
+                    {
+                        id: 1,
+                        name: 'Белье трикотажное',
+                        sizes: ['88/158,164', '88/170,176', '88/182,188', '92/158,164', '92/170,176', '92/182,188', '96/158,164', '96/170,176', '96/182,188']
+                    },
+                    {
+                        id: 2,
+                        name: 'Обувь',
+                        sizes: ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45']
+                    }
+                ]
+            },
+            state: {
+                editingCategoryId: null,
+                editingCardId: null,
+                editingCardCategoryId: null,
+                editingTemplateId: null,
+                currentTemplateSizes: [],
+                pendingConfirmAction: null
+            },
+
+            // Утилиты
+            utils: {
+                escapeHtml(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                },
+
+                generateId() {
+                    return Date.now() + Math.random().toString(36).substr(2, 9);
+                },
+
+                showToast(message, duration = 3000) {
+                    const toast = document.getElementById('toast');
+                    toast.textContent = message;
+                    toast.classList.add('show');
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, duration);
+                },
+
+                debounce(func, wait) {
+                    let timeout;
+                    return function executedFunction(...args) {
+                        const later = () => {
+                            clearTimeout(timeout);
+                            func(...args);
+                        };
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                    };
+                }
+            },
+
+            // Работа с данными
+            storage: {
+                save() {
+                    try {
+                        localStorage.setItem('warehouseData', JSON.stringify(App.data));
+                        return true;
+                    } catch (e) {
+                        if (e.name === 'QuotaExceededError') {
+                            App.utils.showToast('Ошибка: недостаточно места для сохранения');
+                        } else {
+                            App.utils.showToast('Ошибка сохранения данных');
+                        }
+                        console.error('Save error:', e);
+                        return false;
+                    }
+                },
+
+                load() {
+                    try {
+                        const saved = localStorage.getItem('warehouseData');
+                        if (saved) {
+                            App.data = JSON.parse(saved);
+                            // Валидация загруженных данных
+                            if (!App.data.categories) App.data.categories = [];
+                            if (!App.data.templates) App.data.templates = [];
+                        }
+                    } catch (e) {
+                        console.error('Load error:', e);
+                        App.utils.showToast('Ошибка загрузки данных');
+                    }
+                },
+
+                export() {
+                    try {
+                        const dataStr = JSON.stringify(App.data, null, 2);
+                        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                        const url = URL.createObjectURL(dataBlob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `warehouse_${new Date().toISOString().split('T')[0]}.json`;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                        App.utils.showToast('Данные экспортированы');
+                    } catch (e) {
+                        console.error('Export error:', e);
+                        App.utils.showToast('Ошибка экспорта данных');
+                    }
+                },
+
+                import(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const importedData = JSON.parse(e.target.result);
+                            // Валидация импортированных данных
+                            if (!importedData.categories || !Array.isArray(importedData.categories)) {
+                                throw new Error('Неверный формат данных');
+                            }
+                            App.data = importedData;
+                            App.storage.save();
+                            App.render.categories();
+                            App.utils.showToast('Данные импортированы');
+                        } catch (error) {
+                            console.error('Import error:', error);
+                            App.utils.showToast('Ошибка импорта: неверный формат файла');
+                        }
+                    };
+                    reader.onerror = () => {
+                        App.utils.showToast('Ошибка чтения файла');
+                    };
+                    reader.readAsText(file);
+                }
+            },
+
+            // Валидация
+            validate: {
+                category(name) {
+                    if (!name || !name.trim()) {
+                        App.utils.showToast('Введите название категории');
+                        return false;
+                    }
+                    if (name.trim().length > 50) {
+                        App.utils.showToast('Название слишком длинное (макс. 50 символов)');
+                        return false;
+                    }
+                    return true;
+                },
+
+                card(number, price) {
+                    if (!number || !number.trim()) {
+                        App.utils.showToast('Введите номер карточки');
+                        return false;
+                    }
+                    if (number.trim().length > 20) {
+                        App.utils.showToast('Номер слишком длинный (макс. 20 символов)');
+                        return false;
+                    }
+                    if (price && (isNaN(parseFloat(price)) || parseFloat(price) < 0)) {
+                        App.utils.showToast('Введите корректную цену');
+                        return false;
+                    }
+                    return true;
+                },
+
+                template(name, sizes) {
+                    if (!name || !name.trim()) {
+                        App.utils.showToast('Введите название шаблона');
+                        return false;
+                    }
+                    if (sizes.length === 0) {
+                        App.utils.showToast('Добавьте хотя бы один размер');
+                        return false;
+                    }
+                    return true;
+                }
+            },
+
+            // Вычисления
+            calculate: {
+                categoryTotal(category) {
+                    return category.cards.reduce((sum, card) => sum + this.cardTotal(card), 0);
+                },
+
+                cardTotal(card) {
+                    return card.sizes.reduce((sum, s) => sum + (parseInt(s.quantity) || 0), 0);
+                }
+            },
+
+            // Рендеринг
+            render: {
+                categories() {
+                    const container = document.getElementById('categories');
+                    const warehouseName = document.getElementById('warehouseName');
+                    
+                    warehouseName.textContent = App.utils.escapeHtml(App.data.warehouseName);
+                    
+                    if (App.data.categories.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                <div>Нет наименований</div>
+                                <div style="font-size: 12px; margin-top: 5px;">Нажмите кнопку ниже, чтобы добавить</div>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    const fragment = document.createDocumentFragment();
+                    
+                    App.data.categories.forEach(category => {
+                        const total = App.calculate.categoryTotal(category);
+                        
+                        const div = document.createElement('div');
+                        div.className = 'category';
+                        
+                        const categoryHeader = document.createElement('div');
+                        categoryHeader.className = 'category-header';
+                        categoryHeader.innerHTML = `
+                            <span class="category-name">${App.utils.escapeHtml(category.name)}</span>
+                            <span class="category-total">Всего: ${total}</span>
+                            <span class="expand-icon" id="icon-${category.id}">▶</span>
+                        `;
+                        categoryHeader.addEventListener('click', () => App.handlers.toggleCategory(category.id));
+                        
+                        const cardsContainer = document.createElement('div');
+                        cardsContainer.className = 'cards';
+                        cardsContainer.id = `cards-${category.id}`;
+                        
+                        category.cards.forEach(card => {
+                            cardsContainer.appendChild(App.render.card(category, card));
+                        });
+                        
+                        const addCardBtn = document.createElement('button');
+                        addCardBtn.className = 'add-btn';
+                        addCardBtn.textContent = '+ Добавить карточку';
+                        addCardBtn.addEventListener('click', () => App.handlers.addCard(category.id));
+                        cardsContainer.appendChild(addCardBtn);
+                        
+                        div.appendChild(categoryHeader);
+                        div.appendChild(cardsContainer);
+                        fragment.appendChild(div);
+                    });
+                    
+                    container.innerHTML = '';
+                    container.appendChild(fragment);
+                },
+
+                card(category, card) {
+                    const total = App.calculate.cardTotal(card);
+                    
+                    const cardDiv = document.createElement('div');
+                    cardDiv.className = 'card';
+                    
+                    const cardHeader = document.createElement('div');
+                    cardHeader.className = 'card-header';
+                    cardHeader.innerHTML = `
+                        <div class="card-info">
+                            <div class="card-number">№ ${App.utils.escapeHtml(card.number)}</div>
+                            <div class="card-price">Цена: ${card.price ? parseFloat(card.price).toFixed(2) + ' ₽' : 'не указана'}</div>
+                        </div>
+                        <span class="card-quantity">${total}</span>
+                        <span class="card-expand-icon" id="card-icon-${category.id}-${card.id}">▶</span>
+                    `;
+                    cardHeader.addEventListener('click', () => App.handlers.toggleCard(category.id, card.id));
+                    
+                    const cardSizes = document.createElement('div');
+                    cardSizes.className = 'card-sizes';
+                    cardSizes.id = `card-sizes-${category.id}-${card.id}`;
+                    
+                    if (card.sizes.length === 0) {
+                        cardSizes.innerHTML = '<div style="color: #999; padding: 10px 0;">Размеры не добавлены</div>';
+                    } else {
+                        card.sizes.forEach(s => {
+                            const sizeItem = document.createElement('div');
+                            sizeItem.className = 'card-size-item';
+                            sizeItem.innerHTML = `
+                                <span class="card-size-name">${App.utils.escapeHtml(s.size)}</span>
+                                <span class="card-size-qty">${s.quantity} шт</span>
+                            `;
+                            cardSizes.appendChild(sizeItem);
+                        });
+                    }
+                    
+                    const cardActions = document.createElement('div');
+                    cardActions.className = 'card-actions';
+                    cardActions.id = `card-actions-${category.id}-${card.id}`;
+                    
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'edit-card-btn';
+                    editBtn.textContent = '✏️ Редактировать';
+                    editBtn.addEventListener('click', () => App.handlers.editCard(category.id, card.id));
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.textContent = 'Удалить';
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        App.handlers.deleteCard(category.id, card.id);
+                    });
+                    
+                    cardActions.appendChild(editBtn);
+                    cardActions.appendChild(deleteBtn);
+                    
+                    cardDiv.appendChild(cardHeader);
+                    cardDiv.appendChild(cardSizes);
+                    cardDiv.appendChild(cardActions);
+                    
+                    return cardDiv;
+                },
+
+                templates() {
+                    const container = document.getElementById('templatesList');
+                    
+                    if (App.data.templates.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📏</div>
+                                <div>Нет шаблонов</div>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    container.innerHTML = '';
+                    
+                    App.data.templates.forEach(t => {
+                        const div = document.createElement('div');
+                        div.className = 'template-item';
+                        div.innerHTML = `
+                            <div style="flex: 1">
+                                <div style="font-weight: 500; margin-bottom: 4px">${App.utils.escapeHtml(t.name)}</div>
+                                <div class="template-sizes">${t.sizes.slice(0, 3).map(s => App.utils.escapeHtml(s)).join(', ')}${t.sizes.length > 3 ? '...' : ''}</div>
+                            </div>
+                            <div>
+                                <button class="edit-btn">Изменить</button>
+                                <button class="delete-btn">Удалить</button>
+                            </div>
+                        `;
+                        
+                        div.querySelector('.edit-btn').addEventListener('click', () => App.handlers.editTemplate(t.id));
+                        div.querySelector('.delete-btn').addEventListener('click', () => App.handlers.deleteTemplate(t.id));
+                        
+                        container.appendChild(div);
+                    });
+                },
+
+                templateSizes() {
+                    const container = document.getElementById('templateSizesList');
+                    container.innerHTML = '';
+                    
+                    App.state.currentTemplateSizes.forEach((size, idx) => {
+                        const chip = document.createElement('span');
+                        chip.className = 'size-chip';
+                        chip.innerHTML = `
+                            ${App.utils.escapeHtml(size)}
+                            <button style="margin-left: 8px; background: none; border: none; color: white; cursor: pointer; font-size: 16px">&times;</button>
+                        `;
+                        chip.querySelector('button').addEventListener('click', () => {
+                            App.state.currentTemplateSizes.splice(idx, 1);
+                            App.render.templateSizes();
+                        });
+                        container.appendChild(chip);
+                    });
+                },
+
+                cardSizes() {
+                    const container = document.getElementById('cardSizesList');
+                    container.innerHTML = '';
+                    
+                    App.state.currentTemplateSizes.forEach((s, idx) => {
+                        const div = document.createElement('div');
+                        div.className = 'size-item';
+                        
+                        const sizeInput = document.createElement('input');
+                        sizeInput.type = 'text';
+                        sizeInput.className = 'size-input';
+                        sizeInput.value = s.size;
+                        sizeInput.placeholder = 'Размер';
+                        sizeInput.maxLength = 30;
+                        sizeInput.addEventListener('input', (e) => {
+                            App.state.currentTemplateSizes[idx].size = e.target.value;
+                        });
+                        
+                        const qtyControl = document.createElement('div');
+                        qtyControl.className = 'qty-control';
+                        
+                        const minusBtn = document.createElement('button');
+                        minusBtn.className = 'qty-btn';
+                        minusBtn.textContent = '−';
+                        minusBtn.addEventListener('click', () => {
+                            App.state.currentTemplateSizes[idx].quantity = Math.max(0, App.state.currentTemplateSizes[idx].quantity - 1);
+                            App.render.cardSizes();
+                        });
+                        
+                        const qtyInput = document.createElement('input');
+                        qtyInput.type = 'number';
+                        qtyInput.className = 'qty-input';
+                        qtyInput.value = s.quantity;
+                        qtyInput.min = 0;
+                        qtyInput.addEventListener('input', (e) => {
+                            App.state.currentTemplateSizes[idx].quantity = Math.max(0, parseInt(e.target.value) || 0);
+                        });
+                        
+                        const plusBtn = document.createElement('button');
+                        plusBtn.className = 'qty-btn';
+                        plusBtn.textContent = '+';
+                        plusBtn.addEventListener('click', () => {
+                            App.state.currentTemplateSizes[idx].quantity++;
+                            App.render.cardSizes();
+                        });
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-btn';
+                        removeBtn.textContent = 'Удалить';
+                        removeBtn.addEventListener('click', () => {
+                            App.state.currentTemplateSizes.splice(idx, 1);
+                            App.render.cardSizes();
+                        });
+                        
+                        qtyControl.appendChild(minusBtn);
+                        qtyControl.appendChild(qtyInput);
+                        qtyControl.appendChild(plusBtn);
+                        
+                        div.appendChild(sizeInput);
+                        div.appendChild(qtyControl);
+                        div.appendChild(removeBtn);
+                        
+                        container.appendChild(div);
+                    });
+                },
+
+                templateSelect() {
+                    const select = document.getElementById('templateSelect');
+                    select.innerHTML = '<option value="">-- Выберите категорию --</option>';
+                    
+                    App.data.templates.forEach(t => {
+                        const option = document.createElement('option');
+                        option.value = t.id;
+                        option.textContent = t.name;
+                        select.appendChild(option);
+                    });
+                }
+            },
+
+            // Обработчики событий
+            handlers: {
+                toggleCategory(id) {
+                    const cards = document.getElementById(`cards-${id}`);
+                    const icon = document.getElementById(`icon-${id}`);
+                    
+                    cards.classList.toggle('show');
+                    icon.classList.toggle('expanded');
+                },
+
+                toggleCard(categoryId, cardId) {
+                    const sizes = document.getElementById(`card-sizes-${categoryId}-${cardId}`);
+                    const actions = document.getElementById(`card-actions-${categoryId}-${cardId}`);
+                    const icon = document.getElementById(`card-icon-${categoryId}-${cardId}`);
+                    
+                    sizes.classList.toggle('show');
+                    actions.classList.toggle('show');
+                    icon.classList.toggle('expanded');
+                },
+
+                // Категории
+                addCategory() {
+                    App.state.editingCategoryId = null;
+                    document.getElementById('categoryEditorTitle').textContent = 'Новое наименование';
+                    document.getElementById('categoryName').value = '';
+                    App.modal.show('categoryEditorModal');
+                },
+
+                saveCategory() {
+                    const name = document.getElementById('categoryName').value.trim();
+                    
+                    if (!App.validate.category(name)) return;
+
+                    if (App.state.editingCategoryId) {
+                        const category = App.data.categories.find(c => c.id === App.state.editingCategoryId);
+                        category.name = name;
+                    } else {
+                        App.data.categories.push({
+                            id: App.utils.generateId(),
+                            name: name,
+                            cards: []
+                        });
+                    }
+
+                    App.storage.save();
+                    App.render.categories();
+                    App.modal.hide('categoryEditorModal');
+                    App.utils.showToast('Категория сохранена');
+                },
+
+                // Карточки
+                addCard(categoryId) {
+                    App.state.editingCardCategoryId = categoryId;
+                    App.state.editingCardId = null;
+                    App.state.currentTemplateSizes = [];
+                    document.getElementById('cardEditorTitle').textContent = 'Новая карточка';
+                    document.getElementById('cardNumber').value = '';
+                    document.getElementById('cardPrice').value = '';
+                    document.getElementById('templateSelect').value = '';
+                    document.getElementById('templateSizeSelect').style.display = 'none';
+                    App.render.templateSelect();
+                    App.render.cardSizes();
+                    App.modal.show('cardEditorModal');
+                },
+
+                editCard(categoryId, cardId) {
+                    const category = App.data.categories.find(c => c.id === categoryId);
+                    const card = category.cards.find(c => c.id === cardId);
+                    
+                    App.state.editingCardCategoryId = categoryId;
+                    App.state.editingCardId = cardId;
+                    App.state.currentTemplateSizes = card.sizes.map(s => ({...s}));
+                    
+                    document.getElementById('cardEditorTitle').textContent = 'Редактировать карточку';
+                    document.getElementById('cardNumber').value = card.number;
+                    document.getElementById('cardPrice').value = card.price || '';
+                    document.getElementById('templateSelect').value = '';
+                    document.getElementById('templateSizeSelect').style.display = 'none';
+                    App.render.templateSelect();
+                    App.render.cardSizes();
+                    App.modal.show('cardEditorModal');
+                },
+
+                deleteCard(categoryId, cardId) {
+                    App.confirm.show(
+                        'Удаление карточки',
+                        'Вы уверены, что хотите удалить эту карточку? Это действие нельзя отменить.',
+                        () => {
+                            const category = App.data.categories.find(c => c.id === categoryId);
+                            category.cards = category.cards.filter(c => c.id !== cardId);
+                            App.storage.save();
+                            App.render.categories();
+                            App.utils.showToast('Карточка удалена');
+                        }
+                    );
+                },
+
+                saveCard() {
+                    const number = document.getElementById('cardNumber').value.trim();
+                    const price = document.getElementById('cardPrice').value.trim();
+                    
+                    if (!App.validate.card(number, price)) return;
+
+                    const category = App.data.categories.find(c => c.id === App.state.editingCardCategoryId);
+                    
+                    if (App.state.editingCardId) {
+                        const card = category.cards.find(c => c.id === App.state.editingCardId);
+                        card.number = number;
+                        card.price = price ? parseFloat(price) : null;
+                        card.sizes = App.state.currentTemplateSizes.filter(s => s.size.trim());
+                    } else {
+                        category.cards.push({
+                            id: App.utils.generateId(),
+                            number: number,
+                            price: price ? parseFloat(price) : null,
+                            sizes: App.state.currentTemplateSizes.filter(s => s.size.trim())
+                        });
+                    }
+
+                    App.storage.save();
+                    App.render.categories();
+                    App.modal.hide('cardEditorModal');
+                    App.utils.showToast('Карточка сохранена');
+                },
+
+                loadTemplateForCard() {
+                    const templateId = document.getElementById('templateSelect').value;
+                    if (templateId) {
+                        const template = App.data.templates.find(t => t.id == templateId);
+                        const sizeSelect = document.getElementById('sizeFromTemplate');
+                        sizeSelect.innerHTML = '<option value="">-- Выберите размер --</option>';
+                        
+                        template.sizes.forEach(s => {
+                            const option = document.createElement('option');
+                            option.value = s;
+                            option.textContent = s;
+                            sizeSelect.appendChild(option);
+                        });
+                        
+                        document.getElementById('templateSizeSelect').style.display = 'block';
+                    } else {
+                        document.getElementById('templateSizeSelect').style.display = 'none';
+                    }
+                },
+
+                addSizeFromTemplate() {
+                    const size = document.getElementById('sizeFromTemplate').value;
+                    if (size) {
+                        // Проверка на дубликаты
+                        if (!App.state.currentTemplateSizes.find(s => s.size === size)) {
+                            App.state.currentTemplateSizes.push({ size: size, quantity: 0 });
+                            document.getElementById('sizeFromTemplate').value = '';
+                            App.render.cardSizes();
+                        } else {
+                            App.utils.showToast('Этот размер уже добавлен');
+                        }
+                    }
+                },
+
+                addSizeManually() {
+                    App.state.currentTemplateSizes.push({ size: '', quantity: 0 });
+                    App.render.cardSizes();
+                },
+
+                // Шаблоны
+                addTemplate() {
+                    App.state.editingTemplateId = null;
+                    App.state.currentTemplateSizes = [];
+                    document.getElementById('templateEditorTitle').textContent = 'Новый шаблон';
+                    document.getElementById('templateName').value = '';
+                    document.getElementById('newSize').value = '';
+                    App.render.templateSizes();
+                    App.modal.hide('templatesModal');
+                    App.modal.show('templateEditorModal');
+                },
+
+                editTemplate(id) {
+                    const template = App.data.templates.find(t => t.id === id);
+                    App.state.editingTemplateId = id;
+                    App.state.currentTemplateSizes = [...template.sizes];
+                    document.getElementById('templateEditorTitle').textContent = 'Редактировать шаблон';
+                    document.getElementById('templateName').value = template.name;
+                    document.getElementById('newSize').value = '';
+                    App.render.templateSizes();
+                    App.modal.hide('templatesModal');
+                    App.modal.show('templateEditorModal');
+                },
+
+                deleteTemplate(id) {
+                    App.confirm.show(
+                        'Удаление шаблона',
+                        'Удалить этот шаблон размеров?',
+                        () => {
+                            App.data.templates = App.data.templates.filter(t => t.id !== id);
+                            App.storage.save();
+                            App.render.templates();
+                            App.utils.showToast('Шаблон удалён');
+                        }
+                    );
+                },
+
+                saveTemplate() {
+                    const name = document.getElementById('templateName').value.trim();
+                    
+                    if (!App.validate.template(name, App.state.currentTemplateSizes)) return;
+
+                    if (App.state.editingTemplateId) {
+                        const template = App.data.templates.find(t => t.id === App.state.editingTemplateId);
+                        template.name = name;
+                        template.sizes = App.state.currentTemplateSizes;
+                    } else {
+                        App.data.templates.push({
+                            id: App.utils.generateId(),
+                            name: name,
+                            sizes: App.state.currentTemplateSizes
+                        });
+                    }
+
+                    App.storage.save();
+                    App.modal.hide('templateEditorModal');
+                    App.modal.show('templatesModal');
+                    App.render.templates();
+                    App.utils.showToast('Шаблон сохранён');
+                },
+
+                addSizeToTemplate() {
+                    const size = document.getElementById('newSize').value.trim();
+                    if (size) {
+                        if (size.length > 30) {
+                            App.utils.showToast('Размер слишком длинный (макс. 30 символов)');
+                            return;
+                        }
+                        App.state.currentTemplateSizes.push(size);
+                        document.getElementById('newSize').value = '';
+                        App.render.templateSizes();
+                    }
+                },
+
+                // Настройки
+                openSettings() {
+                    document.getElementById('warehouseInput').value = App.data.warehouseName;
+                    App.modal.show('settingsModal');
+                },
+
+                closeSettings() {
+                    const newName = document.getElementById('warehouseInput').value.trim();
+                    if (newName && newName !== App.data.warehouseName) {
+                        App.data.warehouseName = newName;
+                        App.storage.save();
+                        App.render.categories();
+                    }
+                    App.modal.hide('settingsModal');
+                },
+
+                clearWarehouse() {
+                    App.confirm.show(
+                        'Очистить склад',
+                        'Вы уверены, что хотите удалить ВСЕ наименования и карточки? Это действие нельзя отменить!',
+                        () => {
+                            App.data.categories = [];
+                            App.storage.save();
+                            App.render.categories();
+                            App.modal.hide('settingsModal');
+                            App.utils.showToast('Склад очищен');
+                        }
+                    );
+                }
+            },
+
+            // Управление модальными окнами
+            modal: {
+                show(id) {
+                    document.getElementById(id).classList.add('show');
+                    // Блокировка скролла body
+                    document.body.style.overflow = 'hidden';
+                },
+
+                hide(id) {
+                    document.getElementById(id).classList.remove('show');
+                    document.body.style.overflow = '';
+                },
+
+                hideAll() {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.classList.remove('show');
+                    });
+                    document.body.style.overflow = '';
+                }
+            },
+
+            // Диалог подтверждения
+            confirm: {
+                show(title, message, onConfirm) {
+                    document.getElementById('confirmTitle').textContent = title;
+                    document.getElementById('confirmMessage').textContent = message;
+                    App.state.pendingConfirmAction = onConfirm;
+                    
+                    const dialog = document.getElementById('confirmDialog');
+                    dialog.classList.add('show');
+                },
+
+                hide() {
+                    document.getElementById('confirmDialog').classList.remove('show');
+                    App.state.pendingConfirmAction = null;
+                },
+
+                execute() {
+                    if (App.state.pendingConfirmAction) {
+                        App.state.pendingConfirmAction();
+                    }
+                    this.hide();
+                }
+            },
+
+            // Инициализация
+            init() {
+                // Загрузка данных
+                this.storage.load();
+                this.render.categories();
+
+                // Привязка обработчиков
+                document.getElementById('settingsBtn').addEventListener('click', () => this.handlers.openSettings());
+                document.getElementById('closeSettingsBtn').addEventListener('click', () => this.handlers.closeSettings());
+                document.getElementById('addCategoryBtn').addEventListener('click', () => this.handlers.addCategory());
+                
+                // Настройки
+                document.getElementById('sizeTemplatesBtn').addEventListener('click', () => {
+                    this.modal.hide('settingsModal');
+                    this.render.templates();
+                    this.modal.show('templatesModal');
+                });
+                
+                document.getElementById('clearWarehouseBtn').addEventListener('click', () => this.handlers.clearWarehouse());
+                document.getElementById('exportDataBtn').addEventListener('click', () => this.storage.export());
+                document.getElementById('importDataBtn').addEventListener('click', () => {
+                    document.getElementById('importFileInput').click();
+                });
+
+                document.getElementById('importFileInput').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.storage.import(file);
+                    }
+                    e.target.value = '';
+                });
+
+                // Шаблоны
+                document.getElementById('closeTemplatesBtn').addEventListener('click', () => {
+                    this.modal.hide('templatesModal');
+                    this.modal.show('settingsModal');
+                });
+                document.getElementById('addTemplateBtn').addEventListener('click', () => this.handlers.addTemplate());
+                document.getElementById('closeTemplateEditorBtn').addEventListener('click', () => {
+                    this.modal.hide('templateEditorModal');
+                    this.modal.show('templatesModal');
+                });
+                document.getElementById('cancelTemplateBtn').addEventListener('click', () => {
+                    this.modal.hide('templateEditorModal');
+                    this.modal.show('templatesModal');
+                });
+                document.getElementById('saveTemplateBtn').addEventListener('click', () => this.handlers.saveTemplate());
+                document.getElementById('addSizeToTemplateBtn').addEventListener('click', () => this.handlers.addSizeToTemplate());
+                
+                // Enter для добавления размера в шаблон
+                document.getElementById('newSize').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.handlers.addSizeToTemplate();
+                    }
+                });
+
+                // Категории
+                document.getElementById('closeCategoryEditorBtn').addEventListener('click', () => this.modal.hide('categoryEditorModal'));
+                document.getElementById('cancelCategoryBtn').addEventListener('click', () => this.modal.hide('categoryEditorModal'));
+                document.getElementById('saveCategoryBtn').addEventListener('click', () => this.handlers.saveCategory());
+                
+                // Enter для сохранения категории
+                document.getElementById('categoryName').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.handlers.saveCategory();
+                    }
+                });
+
+                // Карточки
+                document.getElementById('closeCardEditorBtn').addEventListener('click', () => this.modal.hide('cardEditorModal'));
+                document.getElementById('cancelCardBtn').addEventListener('click', () => this.modal.hide('cardEditorModal'));
+                document.getElementById('saveCardBtn').addEventListener('click', () => this.handlers.saveCard());
+                document.getElementById('templateSelect').addEventListener('change', () => this.handlers.loadTemplateForCard());
+                document.getElementById('addSizeFromTemplateBtn').addEventListener('click', () => this.handlers.addSizeFromTemplate());
+                document.getElementById('addSizeManuallyBtn').addEventListener('click', () => this.handlers.addSizeManually());
+
+                // Подтверждение
+                document.getElementById('confirmNoBtn').addEventListener('click', () => this.confirm.hide());
+                document.getElementById('confirmYesBtn').addEventListener('click', () => this.confirm.execute());
+
+                // Закрытие модалок по клику на фон
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            this.modal.hide(modal.id);
+                        }
+                    });
+                });
+
+                // Показываем приветствие при первом запуске
+                if (!localStorage.getItem('warehouseData')) {
+                    setTimeout(() => {
+                        App.utils.showToast('Добро пожаловать! Начните с добавления наименования', 5000);
+                    }, 500);
+                }
+            }
+        };
+
+        // Запуск приложения
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => App.init());
+        } else {
+            App.init();
+        }
+
+        // Регистрация Service Worker для PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZXZlbnQpIHsgc2VsZi5za2lwV2FpdGluZygpOyB9KTsgc2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7IGV2ZW50LnJlc3BvbmRXaXRoKGZldGNoKGV2ZW50LnJlcXVlc3QpKTsgfSk7')
+                    .catch(() => {
+                        // Service Worker не критичен для работы
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
